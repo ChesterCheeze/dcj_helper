@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DCJ XML tool</title>
+</head>
+<body>
+    <h1>Disease Control Journal XML tool</h1>
+    <h3>Version: Prototype v1.0</h3>
+    <h3>Step 1: Choose XML file exported from ThaiJo then submit.</h3>
+    <p>program will automatically fix XML file.</p>
+   <!--  <form method="POST" action="http://127.0.0.1:8000/index" enctype="multipart/form-data">
+        <input type="file" name="file_upload" placeholder="file"></input>
+        <button type="submit" id="upload">Submit</button>
+    </form> -->
+    <form>
+        <input type="file" id="fileInput" placeholder="Choose file">
+        <button type="button" onclick="uploadFile()">Upload</button>
+    </form>
+    <div id="progress">
+    
+    </div>
+    <p>File name: {{ filename }}</p>
+    <h3>Step 2: Download the file.</h3>
+    <form method="POST" action="http://127.0.0.1:8000/download" enctype="multipart/form-data">
+        <button type="submit">Download</button>
+    </form>
+    <script>
+        function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('file_upload', file);
+
+            fetch('http://127.0.0.1:8000/index', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                document.getElementById('progress').textContent = response.statusText;
+                console.log(response);
+            })
+            .catch(error => {
+                document.getElementById('progress').textContent = error;
+                console.error(error);
+            });
+        }
+    </script>
+</body>
+</html>
