@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
 import json
-from pubmedxml import modify_file
+from pubmedxml import fix_xml, read_vol_issue
 
 with open("api_key.json") as f:
     data = json.load(f)
@@ -25,13 +25,12 @@ def root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/index")
-def create_upload_file(file_upload: UploadFile):
-    data = file_upload.read()
-    #save_to = UPLOAD_FOLDER / file_upload.filename
-    #with open(save_to, "wb") as buffer:
-    #    buffer.write(data)
-    vol_issue = modify_file(data)
-    #return templates.TemplateResponse("index.html",{"filename": file_upload.filename, "request": request})
+async def create_upload_file(file_upload: UploadFile):
+    data_byte = await file_upload.read()
+    
+    data_str = data_byte.decode()
+    vol_issue = read_vol_issue(data_str)
+    
     return {"volume": vol_issue['volume'], "issue": vol_issue['issue']}
 
 

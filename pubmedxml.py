@@ -2,11 +2,10 @@ import xml.etree.ElementTree as ET
 import re
 import json
 
-def read_vol_issue(xml_data):
-    tree = ET.parse(xml_data)
-    root = tree.getroot()
-    volume = root.find('Article/Journal/Volume')
-    issue = root.find('Article/Journal/Issue')
+def read_vol_issue(xml_data: str):
+    tree_root = ET.fromstring(xml_data)
+    volume = tree_root.find('Article/Journal/Volume')
+    issue = tree_root.find('Article/Journal/Issue')
     return {'volume': volume.text, 'issue': issue.text}
 
 def fix_xml():
