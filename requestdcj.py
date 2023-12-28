@@ -15,8 +15,7 @@ def get_current_issue():
     try:
         url = f"https://he01.tci-thaijo.org/index.php/DCJ/api/v1/issues/current?apiToken={API_KEY}"
         response = requests.request("GET", url, headers=headers)
-        data = response.json()
-        return data
+        return response.json()
     except:
         return None
 
@@ -24,17 +23,15 @@ def get_list_of_issues():
     try:
         url = f"https://he01.tci-thaijo.org/index.php/DCJ/api/v1/issues?apiToken={API_KEY}"
         response = requests.request("GET", url, headers=headers)
-        data = response.json()
-        return data
+        return response.json()
     except:
         return None
 
-def get_issue_by_id(id):
+def get_issue_by_id(id: str):
     try:
         url = f"https://he01.tci-thaijo.org/index.php/DCJ/api/v1/issues/{id}?apiToken={API_KEY}"
         response = requests.request("GET", url, headers=headers)
-        data = response.json()
-        return data
+        return response.json()
     except:
         return None
     
@@ -44,7 +41,7 @@ def get_abstract(url):
         response = requests.request("GET", url+url_patch, headers=headers)
         data = response.json()
         text = data['abstract']['en_US']
-        text_without_html = BeautifulSoup(text, 'html.parser').get_text()
-        return text_without_html
+        
+        return BeautifulSoup(text, 'html.parser').get_text()
     except:
         return None

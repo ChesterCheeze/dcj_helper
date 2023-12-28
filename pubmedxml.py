@@ -2,26 +2,35 @@ import xml.etree.ElementTree as ET
 import re
 import json
 
+
+with open("issue_list.json") as f:
+    data = json.load(f)
+ISSUE_LIST = data["items"]
+
 def read_vol_issue(xml_data: str):
     tree_root = ET.fromstring(xml_data)
     volume = tree_root.find('Article/Journal/Volume')
     issue = tree_root.find('Article/Journal/Issue')
-    return {'volume': volume.text, 'issue': issue.text}
+    return {'volume': int(volume.text), 'issue': str(issue.text)}
 
-def fix_xml():
+def get_issue_id(vol: int, issue: str):
+    for item in ISSUE_LIST:
+        if item['volume'] == vol and item['number'] == issue:
+            return item['id']
+    return None
+
+def fix_xml(xml_data: str):
 
     # Parse the XML file
-    tree = ET.parse('./uploads/pubmed-20230830-153649-issues-476.xml')
+    # tree = ET.parse('./uploads/pubmed-20230830-153649-issues-476.xml')
 
     # Get the root element
-    root = tree.getroot()
+    root = ET.fromstring(xml_data)
 
     # Modify the header element
     # volume = root.find('Article/Journal/Volume')
 
     # issue = root.find('Article/Journal/Issue')
-
-    publisher = root.find('Article/Journal/PublisherName')
 
     with open('new_data.json') as f:
         data = json.load(f)
@@ -68,7 +77,7 @@ def fix_xml():
             journal.find('Issn').text = '1178-2005'
 
     # Write the modified XML to a new file
-    tree.write('modified_file.xml', encoding='utf-8', xml_declaration=False)
+    # tree.write('modified_file.xml', encoding='utf-8', xml_declaration=False)
 
     with open('modified_file.xml', 'r', encoding='utf-8') as f:
         contents = f.read()
