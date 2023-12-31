@@ -6,7 +6,8 @@ from pathlib import Path
 import json
 
 from pubmedxml import fix_xml, read_vol_issue, get_issue_id
-from requestdcj import get_abstract, get_issue_by_id
+from requestdcj import get_issue_by_id
+from datafix import build_data_fix
 
 with open("api_key.json") as f:
     data = json.load(f)
@@ -29,13 +30,16 @@ def root(request: Request):
 @app.post("/index")
 async def create_upload_file(file_upload: UploadFile):
     data_byte = await file_upload.read()
+    file_name = file_upload.filename
     
     data_str = data_byte.decode()
     vol_issue = read_vol_issue(data_str)
     issue_id = get_issue_id(vol_issue['volume'], vol_issue['issue'])
     issue_data = get_issue_by_id(str(issue_id))
+    data_fix = await build_data_fix(issue_data)
+    fix_xml(data_str, file_name, data_fix)
 
-    return {"issueID":issue_id , "volume": vol_issue['volume'], "issue": vol_issue['issue'], "url": issue_data["articles"][0]["publications"][0]["_href"]}
+    return {"issueID":issue_id , "volume": vol_issue['volume'], "issue": vol_issue['issue'], "data": data_fix['articles']}
 
 
 @app.post("/download")
