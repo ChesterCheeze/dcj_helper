@@ -1,2 +1,5 @@
 fastapi[all]
 uvicorn[standard]
+jinja2
+requests
+bs4
