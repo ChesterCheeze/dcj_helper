@@ -78,6 +78,8 @@ def fix_xml(xml_data: str, file_name, data_fix):
     with open(f'{file_name} modified_file.xml', 'w', encoding='utf-8') as f:
         f.write(h)
 
+    return f"{file_name} modified_file.xml"
+
 def fix_title(root, data):
 
     data_indx = 0
