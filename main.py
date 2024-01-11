@@ -28,7 +28,7 @@ def root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/index")
-async def create_upload_file(file_upload: UploadFile):
+async def create_upload_file(file_upload: UploadFile, request: Request):
     data_byte = await file_upload.read()
     file_name = file_upload.filename
     
@@ -37,11 +37,11 @@ async def create_upload_file(file_upload: UploadFile):
     issue_id = get_issue_id(vol_issue['volume'], vol_issue['issue'])
     issue_data = get_issue_by_id(str(issue_id))
     data_fix = await build_data_fix(issue_data)
-    fix_xml(data_str, file_name, data_fix)
+    fixed_name = fix_xml(data_str, file_name, data_fix)
 
-    return {"issueID":issue_id , "volume": vol_issue['volume'], "issue": vol_issue['issue'], "data": data_fix['articles']}
+    return {"status": "Succes", "filename": fixed_name}
 
 
-@app.post("/download")
-def download_file():
-    return FileResponse("modified_file_1.xml", media_type="application/xml", filename="modified_file_1.xml")
+@app.get("/download/")
+def download_file(file_path: str):
+    return FileResponse(file_path, media_type="application/xml", filename=file_path)
