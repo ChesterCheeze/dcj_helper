@@ -39,7 +39,7 @@ def fix_xml(xml_data: str, file_name, data_fix):
     # publisher.text = 'Division of Innovation and Research, Department of Disease Control, Ministry of Public Health, Thailand'
 
     for publisher in root.findall('Article/Journal/PublisherName'):
-        publisher.text = 'Division of Innovation and Research, Department of Disease Control, Ministry of Public Health, Thailand'
+        publisher.text = 'Department of Disease Control, Ministry of Public Health, Thailand'
 
     # Find all Journal elements
     # articles = root.findall('Article')
