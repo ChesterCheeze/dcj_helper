@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 import re
 import json
+from xml.sax.saxutils import unescape
 
 
 def load_list_of_issues(file_name):
@@ -57,7 +58,7 @@ def fix_xml(xml_data: str, file_name, data_fix):
           
     indx = 0
     for article in root.findall("Article"):
-        article.find("Abstract").text = data["articles"][indx]["abstract"]
+        article.find("Abstract").text = unescape(data["articles"][indx]["abstract"])
         indx = indx + 1
 
     for article in root.findall('Article'):
@@ -79,15 +80,11 @@ def fix_xml(xml_data: str, file_name, data_fix):
         root.append(article)
 
     # Write the modified XML to a new file
-    tree = ET.ElementTree(root)
-    tree.write('modified_file.xml', encoding='utf-8', xml_declaration=False)
+    contents = ET.tostring(root, encoding='unicode', method='xml')
 
-    with open('modified_file.xml', 'r', encoding='utf-8') as f:
-        contents = f.read()
-
-    h = '<!DOCTYPE ArticleSet PUBLIC "-//NLM//DTD PubMed 2.8//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/in/PubMed.dtd">\n' + contents
+    contents = '<!DOCTYPE ArticleSet PUBLIC "-//NLM//DTD PubMed 2.8//EN" "https://dtd.nlm.nih.gov/ncbi/pubmed/in/PubMed.dtd">\n' + contents
 
     with open(f'{file_name}', 'w', encoding='utf-8') as f:
-        f.write(h)
+        f.write(contents)
 
     return f"{file_name}"
